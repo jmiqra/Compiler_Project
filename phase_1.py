@@ -125,7 +125,6 @@ def t_Or(t):
 	t.type = 'T_Or'
 	return t
 
-
 def t_BoolConstant(t):
 	r'(true|false)'
 	t.type = 'T_BoolConstant'
@@ -153,7 +152,7 @@ def t_StringConstant(t): #needs to be completed
 
 def t_DoubleConstant(t):
 	r'\d+\.\d*(E?)\+?\d+'
-	t.value = float(t.value)
+#	t.value = float(t.value)
 	t.type = 'T_DoubleConstant'
 	return t
 
@@ -173,7 +172,6 @@ def t_newline(t):
      r'\n+'
      t.lexer.lineno += len(t.value)
 
-
 # Compute column.
  #     input is the input text string
  #     token is a token instance
@@ -187,14 +185,12 @@ def t_error(t):
 
 
 
-
-
 lexer = lex.lex()
 #input_str = "12.3E+-2"
 #lexer.input(input_str)
 
 input_str = ''
-file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/comment.frag", "r")
+file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/number.frag", "r")
 if file.mode == 'r':
 	input_str = file.read()
 lexer.input(input_str)
@@ -208,10 +204,11 @@ while True:
 	if(operators.get(t.type) != None):
 		op_type = "'" + operators.get(t.type) + "'"
 	value = ""
-	if ( t.type == "T_IntConstant" or t.type == "T_DoubleConstant" 
-	or t.type == "T_BoolConstant" or t.type == "T_StringConstant"): #bool and string const
+	if ( t.type == "T_IntConstant" or t.type == "T_BoolConstant" or t.type == "T_StringConstant" ):
 		value = "(value = " + str(t.value) + ")"
+	elif ( t.type == "T_DoubleConstant" ):
+		value = "(value = " + str(int(float(t.value))) + ")"
 	#print(t)
 	#print(t.value, "\t\tline ", t.lineno, "cols ", t.lexpos+1, "-", t.lexpos+len(str(t.value)), " ", t.type)
-	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " ", op_type, value)
+	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
 	
