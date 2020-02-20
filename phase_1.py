@@ -135,16 +135,16 @@ def t_Identifier(t):
 	if reserved.get(t.value) != None:
 		t.type = reserved.get(t.value)
 		return t
+	t.type = 'T_Identifier'
 	if len(t.value) > 31:
 		t_error(t)
 		return
-	t.type = 'T_Identifier'
 	return t
 
-def t_StringConstant(t): #needs to be completed
+def t_StringConstant(t):
 	r'"[^\n|"]*(")?'
 	t.type = 'T_StringConstant'
-	if t.value[-1] != '\"':
+	if ((t.value[-1] != '\"') or (t.value[0] == '\"' and len(t.value) == 1)):
 		t_error(t)
 		t.lexer.lineno += 1
 		return
@@ -152,7 +152,7 @@ def t_StringConstant(t): #needs to be completed
 
 def t_DoubleConstant(t):
 	r'\d+\.\d*(E?)\+?\d+'
-#	t.value = float(t.value)
+	#t.value = float(t.value)
 	t.type = 'T_DoubleConstant'
 	return t
 
@@ -174,15 +174,22 @@ def t_newline(t):
      t.lexer.lineno += len(t.value)
 
 # Compute column.
- #     input is the input text string
- #     token is a token instance
+#     input is the input text string
+#     token is a token instance
 def find_column(input, token):
 	line_start = input.rfind('\n', 0, token.lexpos) + 1
 	return (token.lexpos - line_start) + 1
 
 def t_error(t):
-     print("\n*** Error in line no ", t.lineno, ".\nIllegal character '%s'" % t.value)
-     t.lexer.skip(1)
+	if (t.type == 'T_Identifier'):
+		print("*** Error line" , t.lineno, ".\n***  Identifier too long: \"", t.value, "\"\n")
+		corrected_value = "(truncated to " + t.value[:31] + ")"
+		print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
+	elif (t.type == 'T_StringConstant'):
+		print("\n*** Error line", t.lineno, ".\n*** Unterminated string constant: %s" % t.value, "\n")
+	else:
+		print("\n*** Error line", t.lineno, ".\n*** Unrecognized char: '%s'" % t.value[0], "\n")
+	t.lexer.skip(1)
 
 
 
@@ -192,7 +199,7 @@ input_str = "0x0"
 lexer.input(input_str)
 '''
 input_str = ''
-file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/badint.frag", "r")
+file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/badstring.frag", "r")
 if file.mode == 'r':
 	input_str = file.read()
 lexer.input(input_str)
