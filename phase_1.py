@@ -159,9 +159,6 @@ def t_DoubleConstant(t): #decimal points 2.10 and 1200.0 vs 1200
 def t_IntConstant(t): # needs to be solved hex vs int
 	#r'\d+'
 	r'(0[xX][\da-fA-F]+)|\d+'
-	#if t.value[0:2] != '0x' or t.value[0:2] != '0X':
-		#t.value = int(t.value)
-	#	print("kochuuuu")
 	t.type = 'T_IntConstant'
 	return t
 
@@ -184,7 +181,7 @@ def find_column(input, token):
 
 def t_error(t):
 	if (t.type == 'T_Identifier'):
-		print("*** Error line" , t.lineno, ".\n***  Identifier too long: \"", t.value, "\"\n")
+		print("\n*** Error line" , t.lineno, ".\n*** Identifier too long: \"", t.value, "\"\n")
 		corrected_value = "(truncated to " + t.value[:31] + ")"
 		print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
 	elif (t.type == 'T_StringConstant'):
@@ -196,8 +193,8 @@ def t_error(t):
 
 
 lexer = lex.lex()
-
-input_str = "0xa23"
+'''
+input_str = "120 45 012 0xa23 001 10 0 12.00 12.E+2 12.e+0"
 lexer.input(input_str)
 '''
 input_str = ''
@@ -205,21 +202,34 @@ file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/s
 if file.mode == 'r':
 	input_str = file.read()
 lexer.input(input_str)
-'''
+
 
 
 while True:
 	t = lexer.token()
 	if not t:
 		break
+	
 	op_type = t.type
-	if(operators.get(t.type) != None):
+	if( operators.get(t.type) != None ):
 		op_type = "'" + operators.get(t.type) + "'"
+	
 	value = ""
-	if ( t.type == "T_IntConstant" or t.type == "T_BoolConstant" or t.type == "T_StringConstant" ):
+	if ( t.type == "T_BoolConstant" or t.type == "T_StringConstant" ):
 		value = "(value = " + str(t.value) + ")"
+	
+	elif ( t.type == "T_IntConstant" ):
+		if(t.value[0:2] == '0X' or t.value[0:2] == '0x'):
+			int_val = str(int(t.value, 16))
+		else:
+			int_val = str(int(t.value))
+		value = "(value = " + int_val + ")"
+	
 	elif ( t.type == "T_DoubleConstant" ):
-		value = "(value = " + str(float(t.value)) + ")"
+		double_val = str(float(t.value))
+		if(double_val[-2:] == '.0'):
+			double_val = double_val[:-2]
+		value = "(value = " + double_val + ")"
 	#print(t)
 	#print(t.value, "\t\tline ", t.lineno, "cols ", t.lexpos+1, "-", t.lexpos+len(str(t.value)), " ", t.type)
 	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
