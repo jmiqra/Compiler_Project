@@ -157,8 +157,9 @@ def t_DoubleConstant(t):
 	return t
 
 def t_IntConstant(t):
-	r'\d+'
-	t.value = int(t.value)
+	#r'\d+'
+	r'(0[xX][\da-fA-F]+)|\d+'
+	#t.value = int(t.value)
 	t.type = 'T_IntConstant'
 	return t
 
@@ -186,14 +187,16 @@ def t_error(t):
 
 
 lexer = lex.lex()
-#input_str = "12.3E+-2"
-#lexer.input(input_str)
-
+'''
+input_str = "0x0"
+lexer.input(input_str)
+'''
 input_str = ''
-file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/number.frag", "r")
+file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/badint.frag", "r")
 if file.mode == 'r':
 	input_str = file.read()
 lexer.input(input_str)
+
 
 
 while True:
