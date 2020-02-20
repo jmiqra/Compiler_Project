@@ -150,16 +150,18 @@ def t_StringConstant(t):
 		return
 	return t
 
-def t_DoubleConstant(t):
-	r'\d+\.\d*(E?)\+?\d+'
+def t_DoubleConstant(t): #decimal points 2.10 and 1200.0 vs 1200
+	r'\d+\.\d*([eE]?)[+-]?\d+'
 	#t.value = float(t.value)
 	t.type = 'T_DoubleConstant'
 	return t
 
-def t_IntConstant(t):
+def t_IntConstant(t): # needs to be solved hex vs int
 	#r'\d+'
 	r'(0[xX][\da-fA-F]+)|\d+'
-	#t.value = int(t.value)
+	#if t.value[0:2] != '0x' or t.value[0:2] != '0X':
+		#t.value = int(t.value)
+	#	print("kochuuuu")
 	t.type = 'T_IntConstant'
 	return t
 
@@ -194,16 +196,16 @@ def t_error(t):
 
 
 lexer = lex.lex()
-'''
-input_str = "0x0"
+
+input_str = "0xa23"
 lexer.input(input_str)
 '''
 input_str = ''
-file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/badstring.frag", "r")
+file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/number.frag", "r")
 if file.mode == 'r':
 	input_str = file.read()
 lexer.input(input_str)
-
+'''
 
 
 while True:
@@ -217,7 +219,7 @@ while True:
 	if ( t.type == "T_IntConstant" or t.type == "T_BoolConstant" or t.type == "T_StringConstant" ):
 		value = "(value = " + str(t.value) + ")"
 	elif ( t.type == "T_DoubleConstant" ):
-		value = "(value = " + str(int(float(t.value))) + ")"
+		value = "(value = " + str(float(t.value)) + ")"
 	#print(t)
 	#print(t.value, "\t\tline ", t.lineno, "cols ", t.lexpos+1, "-", t.lexpos+len(str(t.value)), " ", t.type)
 	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
