@@ -3,6 +3,6 @@
 2. For python lex implementation PLY is used
 
 3. For executing the compiler have to use the follwing command
-./exec.sh <filepath> <outputpath>
+./exec.sh <filepath>
 
-4. For <filepath> and <outputpath> have to use absolute file paths 
+4. For <filepath> have to use absolute file path 
