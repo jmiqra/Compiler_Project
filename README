@@ -1,8 +1,8 @@
 1. Python version 3.7.3 is used
 
-2. For python lex implementation PLY is used
+2. For python lex implementation PLY is used that is lex.py
 
-3. For executing the compiler have to use the follwing command
+3. For executing the compiler, have to use the follwing command from inside of the workdir
 ./exec.sh <filepath>
 
 4. For <filepath> have to use absolute file path 

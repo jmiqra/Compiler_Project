@@ -1,2 +1,1 @@
-cd ../
-python phase_1.py $1
+python ../phase_1.py $1
