@@ -5,8 +5,11 @@ Created on Mon Feb 17 23:11:31 2020
 
 @author: iqrah
 """
+from __future__ import division
+
 import sys
-import ply.lex as lex
+import lex
+#import ply.lex as lex
 
 tokens = [
 
