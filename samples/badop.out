@@ -1,0 +1,34 @@
+=		line 1cols 1-1 is '='
+!		line 1cols 2-2 is '!'
+
+*** Error line2.
+*** Unrecognized char: '$'
+
+
+*** Error line3.
+*** Unrecognized char: '@'
+
+
+*** Error line4.
+*** Unrecognized char: '$'
+
+
+*** Error line5.
+*** Unrecognized char: '^'
+
+
+*** Error line6.
+*** Unrecognized char: '&'
+
+
+*** Error line7.
+*** Unrecognized char: '~'
+
+
+*** Error line8.
+*** Unrecognized char: '`'
+
+
+*** Error line9.
+*** Unrecognized char: '?'
+

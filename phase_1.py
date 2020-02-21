@@ -5,7 +5,7 @@ Created on Mon Feb 17 23:11:31 2020
 
 @author: iqrah
 """
-
+import sys
 import ply.lex as lex
 
 tokens = [
@@ -150,13 +150,13 @@ def t_StringConstant(t):
 		return
 	return t
 
-def t_DoubleConstant(t): #decimal points 2.10 and 1200.0 vs 1200
+def t_DoubleConstant(t): #decimal points done 2.10 and 1200.0 vs 1200
 	r'\d+\.\d*([eE]?)[+-]?\d+'
 	#t.value = float(t.value)
 	t.type = 'T_DoubleConstant'
 	return t
 
-def t_IntConstant(t): # needs to be solved hex vs int
+def t_IntConstant(t): # solved hex vs int
 	#r'\d+'
 	r'(0[xX][\da-fA-F]+)|\d+'
 	t.type = 'T_IntConstant'
@@ -180,30 +180,44 @@ def find_column(input, token):
 	return (token.lexpos - line_start) + 1
 
 def t_error(t):
+	#print("\n*** Error line", t.lineno, ".")
+	write_to_file("\n*** Error line" + str(t.lineno) + ".")
 	if (t.type == 'T_Identifier'):
-		print("\n*** Error line" , t.lineno, ".\n*** Identifier too long: \"", t.value, "\"\n")
+		#print("*** Identifier too long: \"", t.value, "\"\n")
+		write_to_file("*** Identifier too long: \"" + t.value + "\"\n")
 		corrected_value = "(truncated to " + t.value[:31] + ")"
-		print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
+		#print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
+		write_to_file(t.value + "line " + str(t.lineno) + "cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + t.type + corrected_value)
 	elif (t.type == 'T_StringConstant'):
-		print("\n*** Error line", t.lineno, ".\n*** Unterminated string constant: %s" % t.value, "\n")
+		#print("*** Unterminated string constant: %s" % t.value, "\n")
+		write_to_file("*** Unterminated string constant: " + t.value + "\n")
 	else:
-		print("\n*** Error line", t.lineno, ".\n*** Unrecognized char: '%s'" % t.value[0], "\n")
+		#print("*** Unrecognized char: '%s'" % t.value[0], "\n")
+		write_to_file("*** Unrecognized char: '%s'"  % str(t.value[0]) + "\n")
 	t.lexer.skip(1)
 
 
-
 lexer = lex.lex()
+
+input_str = ''
 '''
 input_str = "120 45 012 0xa23 001 10 0 12.00 12.E+2 12.e+0"
 lexer.input(input_str)
 '''
-input_str = ''
-file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/pp1-post(1)/pp1-post/samples/number.frag", "r")
-if file.mode == 'r':
-	input_str = file.read()
+#input_file = open("/home/iqrah/Desktop/Spring_02_2020/Compilers/Compiler_Project_Iqrah/samples/number.frag", "r")
+input_file = open(str(sys.argv[1]), "r")
+if input_file.mode == 'r':
+	input_str = input_file.read()
 lexer.input(input_str)
 
+output_file = open(str(sys.argv[2]), "a+")
+output_file.truncate(0)
 
+def write_to_file(output_str):
+	terminal = sys.stdout
+	sys.stdout = output_file
+	print(output_str)
+	sys.stdout = terminal
 
 while True:
 	t = lexer.token()
@@ -232,5 +246,5 @@ while True:
 		value = "(value = " + double_val + ")"
 	#print(t)
 	#print(t.value, "\t\tline ", t.lineno, "cols ", t.lexpos+1, "-", t.lexpos+len(str(t.value)), " ", t.type)
-	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
-	
+	#print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
+	write_to_file(t.value + "\t\tline " + str(t.lineno) + "cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + op_type + value)
