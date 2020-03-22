@@ -183,20 +183,20 @@ def find_column(input, token):
 	return (token.lexpos - line_start) + 1
 
 def t_error(t):
-	print("\n*** Error line", t.lineno, ".")
-	#write_to_file("\n*** Error line" + str(t.lineno) + ".")
+	#print("\n*** Error line", t.lineno, ".")
+	write_to_file("\n*** Error line " + str(t.lineno) + ".")
 	if (t.type == 'T_Identifier'):
-		print("*** Identifier too long: \"", t.value, "\"\n")
-		#write_to_file("*** Identifier too long: \"" + t.value + "\"\n")
+		#print("*** Identifier too long: \"", t.value, "\"\n")
+		write_to_file("*** Identifier too long: \"" + t.value + "\"\n")
 		corrected_value = "(truncated to " + t.value[:31] + ")"
-		print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
-		#write_to_file(t.value + "line " + str(t.lineno) + "cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + t.type + corrected_value)
+		#print(t.value, "line ", t.lineno, "cols ", find_column(input_str, t), "-", find_column(input_str, t)+len(str(t.value))-1, " is ", t.type, corrected_value)
+		write_to_file(t.value + " line " + str(t.lineno) + " cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + t.type + " " + corrected_value)
 	elif (t.type == 'T_StringConstant'):
-		print("*** Unterminated string constant: %s" % t.value, "\n")
-		#write_to_file("*** Unterminated string constant: " + t.value + "\n")
+		#print("*** Unterminated string constant: %s" % t.value, "\n")
+		write_to_file("*** Unterminated string constant: " + t.value + "\n")
 	else:
-		print("*** Unrecognized char: '%s'" % t.value[0], "\n")
-		#write_to_file("*** Unrecognized char: '%s'"  % str(t.value[0]) + "\n")
+		#print("*** Unrecognized char: '%s'" % t.value[0], "\n")
+		write_to_file("*** Unrecognized char: '%s'"  % str(t.value[0]) + "\n")
 	t.lexer.skip(1)
 
 
@@ -213,15 +213,15 @@ if input_file.mode == 'r':
 	input_str = input_file.read()
 lexer.input(input_str)
 
-'''
-output_file = open(str(sys.argv[2]), "a+")
-output_file.truncate(0)
+
+#output_file = open(str(sys.argv[2]), "a+")
+#output_file.truncate(0)
 def write_to_file(output_str):
-	terminal = sys.stdout
-	sys.stdout = output_file
+	#terminal = sys.stdout
+	#sys.stdout = output_file
 	print(output_str)
-	sys.stdout = terminal
-'''
+	#sys.stdout = terminal
+
 
 while True:
 	t = lexer.token()
@@ -250,5 +250,5 @@ while True:
 		value = "(value = " + double_val + ")"
 	#print(t)
 	#print(t.value, "\t\tline ", t.lineno, "cols ", t.lexpos+1, "-", t.lexpos+len(str(t.value)), " ", t.type)
-	print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
-	#write_to_file(t.value + "\t\tline " + str(t.lineno) + "cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + op_type + value)
+	#print(t.value, "\t\tline ", t.lineno, "cols ", find_column(input_str, t), "-",  find_column(input_str, t)+len(str(t.value))-1, " is ", op_type, value)
+	write_to_file(t.value.ljust(12) + " line " + str(t.lineno) + " cols " + str(find_column(input_str, t)) + "-" + str(find_column(input_str, t)+len(str(t.value))-1) + " is " + op_type + " " + value)
